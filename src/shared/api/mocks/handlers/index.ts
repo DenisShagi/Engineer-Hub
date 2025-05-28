@@ -17,4 +17,17 @@ export const handlers = [
   http.get("/boards", () => {
     return HttpResponse.json(boards);
   }),
+  http.post("/boards", async (ctx) => {
+    const data = await ctx.request.json();
+    const board = {
+      id: crypto.randomUUID(),
+      name: data.name,
+    };
+    boards.push(board);
+    return HttpResponse.json(board);
+  }),
+  // http.delete("/boards/{boardId}", ({ params }) => {
+  //   const { boardId } = params;
+  //   const index = boards
+  // }),
 ];
