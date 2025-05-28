@@ -5,11 +5,11 @@ import { ApiSchemas } from "../../schema";
 const boards: ApiSchemas["Board"][] = [
   {
     id: "board-1",
-    name: "Marketing Campaign",
+    name: "Заявка-1-[mock]",
   },
   {
     id: "board-2",
-    name: "Product Roadmap",
+    name: "Заявка-2-[mock]",
   },
 ];
 
