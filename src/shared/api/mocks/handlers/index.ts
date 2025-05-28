@@ -26,8 +26,13 @@ export const handlers = [
     boards.push(board);
     return HttpResponse.json(board);
   }),
-  // http.delete("/boards/{boardId}", ({ params }) => {
-  //   const { boardId } = params;
-  //   const index = boards
-  // }),
+  http.delete("/boards/{boardId}", ({ params }) => {
+    const { boardId } = params;
+    const index = boards.findIndex((board) => board.id === boardId);
+    if(index === -1){
+      return HttpResponse.json({message: 'Board Not Found', code: 'NOT_FOUND'}, {status: 404})
+    };
+    boards.splice(index, 1);
+    return HttpResponse.json({ message: "Boarded is deleted", code: 'OK' });
+  }),
 ];

@@ -20,3 +20,9 @@ enableMocking().then(() => {
     </StrictMode>,
   );
 });
+
+  // createRoot(document.getElementById("root")!).render(
+  //   <StrictMode>
+  //     <RouterProvider router={router} />
+  //   </StrictMode>,
+  // );
