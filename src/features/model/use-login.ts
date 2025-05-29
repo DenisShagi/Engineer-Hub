@@ -16,12 +16,17 @@ export function useLogin() {
     loginMutation.mutate({ body: data });
   };
 
+  const resetError = () => {
+    loginMutation.reset()
+  }
+
   const errorMessage = loginMutation.isError
     ? loginMutation.error.message
     : undefined;
 
   return {
     login,
+    resetError,
     isPending: loginMutation.isPending,
     errorMessage,
   };

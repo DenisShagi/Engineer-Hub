@@ -1,4 +1,5 @@
 import { Button } from "@/shared/ui/kit/button";
+import { Loader2} from 'lucide-react'
 import {
   FormField,
   FormItem,
@@ -31,7 +32,7 @@ export function LoginForm() {
     resolver: zodResolver(loginSchema),
   });
 
-  const { errorMessage, isPending, login } = useLogin();
+  const { errorMessage, isPending, login, resetError} = useLogin();
 
   const onSubmit = form.handleSubmit(login);
 
@@ -59,7 +60,11 @@ export function LoginForm() {
             <FormItem>
               <FormLabel>Пароль</FormLabel>
               <FormControl>
-                <Input placeholder="******" type="password" {...field} />
+                <Input placeholder="******" type="password" {...field} onChange={(e) => {
+                  field.onChange(e);
+                  resetError()
+                  form.clearErrors()
+                }} />
               </FormControl>
 
               <FormMessage />
@@ -72,6 +77,7 @@ export function LoginForm() {
         )}
 
         <Button disabled={isPending} type="submit">
+          {isPending ? <Loader2 className="animate-spin w-4 h-4 mr-2" /> : null}
           Войти
         </Button>
       </form>
