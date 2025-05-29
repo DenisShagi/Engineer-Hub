@@ -1,3 +1,4 @@
+import {SignJWT, jwtVerify} from "jose"
 import { HttpResponse } from 'msw'
 
 type Session = {
@@ -13,7 +14,7 @@ export function createRefreshTokenCookie(refreshToken: string) {
   return `refreshToken=${refreshToken}; Max-Age=604800`;
 }
 
-async function generateTokens(session: Session) {
+export async function generateTokens(session: Session) {
   const accessToken = await new SignJWT(session)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
