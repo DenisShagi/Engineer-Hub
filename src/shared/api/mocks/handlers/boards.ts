@@ -13,7 +13,7 @@ const boards: ApiSchemas["Board"][] = [
   },
 ];
 
-export const handlers = [
+export const boardsHandlers = [
   http.get("/boards", () => {
     return HttpResponse.json(boards);
   }),
@@ -29,10 +29,13 @@ export const handlers = [
   http.delete("/boards/{boardId}", ({ params }) => {
     const { boardId } = params;
     const index = boards.findIndex((board) => board.id === boardId);
-    if(index === -1){
-      return HttpResponse.json({message: 'Board Not Found', code: 'NOT_FOUND'}, {status: 404})
-    };
+    if (index === -1) {
+      return HttpResponse.json(
+        { message: "Board Not Found", code: "NOT_FOUND" },
+        { status: 404 },
+      );
+    }
     boards.splice(index, 1);
-    return HttpResponse.json({ message: "Boarded is deleted", code: 'OK' });
+    return HttpResponse.json({ message: "Boarded is deleted", code: "OK" });
   }),
 ];
