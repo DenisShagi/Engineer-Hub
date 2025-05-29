@@ -12,6 +12,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRegister } from "../model/use-register";
+import { LoaderPinwheel } from "lucide-react";
 
 const registerSchema = z
   .object({
@@ -25,7 +26,9 @@ const registerSchema = z
         required_error: "Пароль обязателен",
       })
       .min(6, "Пароль должен быть не менее 6 символов"),
-    confirmPassword: z.string().optional(),
+    confirmPassword: z.string({
+      required_error: "Повтор пароля обязателен",
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ["confirmPassword"],
@@ -37,7 +40,7 @@ export function RegisterForm() {
     resolver: zodResolver(registerSchema),
   });
 
-  const { errorMessage, isPending, register } = useRegister();
+  const { errorMessage, isPending, register, resetError } = useRegister();
 
   const onSubmit = form.handleSubmit(register);
 
@@ -51,9 +54,16 @@ export function RegisterForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="admin@gmail.com" {...field} />
+                <Input
+                  placeholder="admin@gmail.com"
+                  {...field}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    form.clearErrors();
+                    resetError();
+                  }}
+                />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
@@ -65,9 +75,17 @@ export function RegisterForm() {
             <FormItem>
               <FormLabel>Пароль</FormLabel>
               <FormControl>
-                <Input placeholder="******" type="password" {...field} />
+                <Input
+                  type="password"
+                  placeholder="******"
+                  {...field}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    form.clearErrors();
+                    resetError();
+                  }}
+                />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
@@ -79,9 +97,17 @@ export function RegisterForm() {
             <FormItem>
               <FormLabel>Подтвердите пароль</FormLabel>
               <FormControl>
-                <Input type="password" {...field} />
+                <Input
+                  type="password"
+                  placeholder="******"
+                  {...field}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    form.clearErrors();
+                    resetError();
+                  }}
+                />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
@@ -92,6 +118,9 @@ export function RegisterForm() {
         )}
 
         <Button disabled={isPending} type="submit">
+          {isPending ? (
+            <LoaderPinwheel className="animate-spin w-4 h-4 mr-2" />
+          ) : null}
           Зарегистрироваться
         </Button>
       </form>

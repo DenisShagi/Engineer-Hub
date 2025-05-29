@@ -16,12 +16,17 @@ export function useRegister() {
     registerMutation.mutate({ body: data });
   };
 
+  const resetError = () => {
+    registerMutation.reset();
+  };
+
   const errorMessage = registerMutation.isError
     ? registerMutation.error.message
     : undefined;
 
   return {
     register,
+    resetError,
     isPending: registerMutation.isPending,
     errorMessage,
   };
