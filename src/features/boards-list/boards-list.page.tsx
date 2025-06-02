@@ -101,14 +101,14 @@ function BoardsListPage() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Доски {CONFIG.API_BASE_URL}</h1>
+      <h1 className="text-2xl font-bold mb-6">Заявки {CONFIG.API_BASE_URL}</h1>
 
       <div className="mb-8 grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="md:col-span-3">
           <Label htmlFor="search">Поиск</Label>
           <Input
             id="search"
-            placeholder="Введите название доски..."
+            placeholder="Введите название заявки..."
             value={boardsFilters.search}
             onChange={(e) => boardsFilters.setSearch(e.target.value)}
             className="w-full"
@@ -136,7 +136,7 @@ function BoardsListPage() {
 
       <Tabs defaultValue="all" className="mb-6">
         <TabsList>
-          <TabsTrigger value="all">Все доски</TabsTrigger>
+          <TabsTrigger value="all">Все заявки</TabsTrigger>
           <TabsTrigger value="favorites">Избранные</TabsTrigger>
         </TabsList>
       </Tabs>
@@ -151,7 +151,7 @@ function BoardsListPage() {
           }}
         >
           <div className="flex-grow">
-            <Label htmlFor="board-name">Название новой доски</Label>
+            <Label htmlFor="board-name">Название новой заявки</Label>
             <Input
               id="board-name"
               name="name"
@@ -159,7 +159,7 @@ function BoardsListPage() {
             />
           </div>
           <Button type="submit" disabled={createBoardMutation.isPending}>
-            Создать доску
+            Создать заявку
           </Button>
         </form>
       </div>
@@ -220,7 +220,7 @@ function BoardsListPage() {
           </div>
 
           {boardsQuery.boards.length === 0 && !boardsQuery.isPending && (
-            <div className="text-center py-10">Доски не найдены</div>
+            <div className="text-center py-10">Заявки не найдены</div>
           )}
 
           {boardsQuery.hasNextPage && (

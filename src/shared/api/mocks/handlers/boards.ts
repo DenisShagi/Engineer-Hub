@@ -15,7 +15,7 @@ function randomDate() {
   ).toISOString();
 }
 
-// Функция для генерации случайного названия доски
+// Функция для генерации случайного названия заявки
 function generateBoardName() {
   const adjectives = [
     "Стратегический",
@@ -175,7 +175,7 @@ export const boardsHandlers = [
       );
     }
 
-    // Обновляем lastOpenedAt при просмотре доски
+    // Обновляем lastOpenedAt при просмотре заявки
     board.lastOpenedAt = new Date().toISOString();
     return HttpResponse.json(board);
   }),
