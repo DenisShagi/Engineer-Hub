@@ -21,6 +21,7 @@ import { ApiSchemas } from "@/shared/api/schema";
 import { useBoardsList } from "./use-boards-list";
 import { useBoardsFilters } from "./use-boards-filters";
 import { useDebouncedValue } from "@/shared/lib/react";
+import { useCreateBoard } from "./use-create-board";
 
 type BoardsSortOption = "createdAt" | "updatedAt" | "lastOpenedAt" | "name";
 
@@ -34,6 +35,8 @@ function BoardsListPage() {
     sort: boardsFilters.sort,
     search: useDebouncedValue(boardsFilters.search, 300),
   });
+
+  const createBoard = useCreateBoard();
   // Обновляем список заявок при получении новых данных
   // useEffect(() => {
   //   if (boardsQuery.data?.list) {
@@ -141,26 +144,12 @@ function BoardsListPage() {
       </Tabs>
 
       <div className="mb-8">
-        <form
-          className="flex gap-4 items-end"
-          onSubmit={(e) => {
-            e.preventDefault();
-            createBoardMutation.mutate({});
-            e.currentTarget.reset();
-          }}
+        <Button
+          disabled={createBoard.isPending}
+          onClick={() => createBoard.createBoard}
         >
-          <div className="flex-grow">
-            <Label htmlFor="board-name">Название новой заявки</Label>
-            <Input
-              id="board-name"
-              name="name"
-              placeholder="Введите название..."
-            />
-          </div>
-          <Button type="submit" disabled={createBoardMutation.isPending}>
-            Создать заявку
-          </Button>
-        </form>
+          Создать заявку
+        </Button>
       </div>
 
       {boardsQuery.isPending ? (
