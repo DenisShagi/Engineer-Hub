@@ -22,6 +22,10 @@ import { useDebouncedValue } from "@/shared/lib/react";
 import { useCreateBoard } from "./use-create-board";
 import { useDeleteBoard } from "./use-delete-board";
 import { useUpdateFavorite } from "./use-update-favorite";
+import { PlusIcon, StarIcon } from "lucide-react";
+import { BoardListLayout, BoardListLayoutHeader } from "./boards-list-layout";
+import { ViewMode, ViewModeToggle } from "./view-mode-toggle";
+import { useState } from "react";
 
 type BoardsSortOption = "createdAt" | "updatedAt" | "lastOpenedAt" | "name";
 
@@ -38,10 +42,22 @@ function BoardsListPage() {
   const deleteBoard = useDeleteBoard();
   const updateFavorite = useUpdateFavorite();
 
+  const [viewMode, setViewMode] = useState<ViewMode>("list");
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Заявки {CONFIG.API_BASE_URL}</h1>
-
+    <BoardListLayout
+      header={
+        <BoardListLayoutHeader
+          title="Заявки"
+          description="Здесь вы можете просматривать и управлять своими заявками"
+          actions={
+            <ViewModeToggle
+              value={viewMode}
+              onChange={(value) => setViewMode(value)}
+            />
+          }
+        />
+      }
+    >
       <div className="mb-8 grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="md:col-span-3">
           <Label htmlFor="search">Поиск</Label>
@@ -75,20 +91,8 @@ function BoardsListPage() {
         </div>
       </div>
 
-      <Tabs defaultValue="all" className="mb-6">
-        <TabsList>
-          <TabsTrigger value="all">Все заявки</TabsTrigger>
-          <TabsTrigger value="favorites">Избранные</TabsTrigger>
-        </TabsList>
-      </Tabs>
-
       <div className="mb-8">
-        <Button
-          disabled={createBoard.isPending}
-          onClick={() => createBoard.createBoard}
-        >
-          Создать заявку
-        </Button>
+        <Button>Создать заявку</Button>
       </div>
 
       {boardsQuery.isPending ? (
@@ -99,13 +103,13 @@ function BoardsListPage() {
             {boardsQuery.boards.map((board) => (
               <Card key={board.id} className="relative">
                 <div className="absolute top-2 right-2 flex items-center gap-2">
+                  <span className="text-sm text-gray-500">
+                    <StarIcon />
+                  </span>
                   <Switch
-                    checked={board.isFavorite}
+                    checked={updateFavorite.isOptimisticFavorite(board)}
                     onCheckedChange={() => updateFavorite.toggle(board)}
                   />
-                  <span className="text-sm text-gray-500">
-                    {board.isFavorite ? "В избранном" : ""}
-                  </span>
                 </div>
                 <CardHeader>
                   <div className="flex flex-col gap-2">
@@ -154,8 +158,14 @@ function BoardsListPage() {
           )}
         </>
       )}
-    </div>
+    </BoardListLayout>
   );
+
+  // return (
+  //   <div className="container mx-auto p-4">
+  //     <h1 className="text-2xl font-bold mb-6">Заявки {CONFIG.API_BASE_URL}</h1>
+  //   </div>
+  // );
 }
 
 export const Component = BoardsListPage;
