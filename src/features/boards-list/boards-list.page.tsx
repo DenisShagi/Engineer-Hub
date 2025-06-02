@@ -19,7 +19,8 @@ import { Switch } from "@/shared/ui/kit/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/kit/tabs";
 import { ApiSchemas } from "@/shared/api/schema";
 import { useBoardsList } from "./use-boards-list";
-import { useBoardsFilters } from './use-boards-filters'
+import { useBoardsFilters } from "./use-boards-filters";
+import { useDebouncedValue } from "@/shared/lib/react";
 
 type BoardsSortOption = "createdAt" | "updatedAt" | "lastOpenedAt" | "name";
 
@@ -28,15 +29,12 @@ function BoardsListPage() {
 
   const queryClient = useQueryClient();
 
-  const [search, setSearch] = useState("");
-
-  const [sort, setSort] = useState<BoardsSortOption>("lastOpenedAt");
-  const boardsFilters = useBoardsFilters()
+  const boardsFilters = useBoardsFilters();
   const boardsQuery = useBoardsList({
     sort: boardsFilters.sort,
-    search: boardsFilters.search
+    search: useDebouncedValue(boardsFilters.search, 300),
   });
-  // Обновляем список досок при получении новых данных
+  // Обновляем список заявок при получении новых данных
   // useEffect(() => {
   //   if (boardsQuery.data?.list) {
   //     if (page === 1) {
@@ -64,7 +62,6 @@ function BoardsListPage() {
       await queryClient.invalidateQueries(
         rqClient.queryOptions("get", "/boards"),
       );
-      
     },
   });
 
@@ -83,7 +80,7 @@ function BoardsListPage() {
   const toggleFavoriteMutation = rqClient.useMutation(
     "put",
     "/boards/{boardId}/favorite",
-    { 
+    {
       onSettled: async () => {
         await queryClient.invalidateQueries(
           rqClient.queryOptions("get", "/boards"),
@@ -119,7 +116,9 @@ function BoardsListPage() {
           <Label htmlFor="sort">Сортировка</Label>
           <Select
             value={boardsFilters.sort}
-            onValueChange={(value) => boardsFilters.setSort(value as BoardsSortOption)}
+            onValueChange={(value) =>
+              boardsFilters.setSort(value as BoardsSortOption)
+            }
           >
             <SelectTrigger id="sort" className="w-full">
               <SelectValue placeholder="Сортировка" />
@@ -226,7 +225,7 @@ function BoardsListPage() {
           {boardsQuery.hasNextPage && (
             <div ref={boardsQuery.cursorRef} className="text-center py-8">
               {boardsQuery.isFetchingNextPage &&
-                "Загрузка дополнительных досок..."}
+                "Загрузка дополнительных заявок..."}
             </div>
           )}
         </>

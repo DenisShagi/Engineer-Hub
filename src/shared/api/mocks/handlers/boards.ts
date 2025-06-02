@@ -76,7 +76,7 @@ function generateBoardName() {
   return `${randomAdjective} ${randomNoun} ${randomTheme}`;
 }
 
-// Генерация 1000 случайных досок
+// Генерация 1000 случайных заявок
 function generateRandomBoards(count: number): ApiSchemas["Board"][] {
   const result: ApiSchemas["Board"][] = [];
 
@@ -95,14 +95,14 @@ function generateRandomBoards(count: number): ApiSchemas["Board"][] {
       createdAt,
       updatedAt,
       lastOpenedAt,
-      isFavorite: Math.random() > 0.7, // Примерно 30% досок будут избранными
+      isFavorite: Math.random() > 0.7, // Примерно 30% заявок будут избранными
     });
   }
 
   return result;
 }
 
-// Создаем 1000 случайных досок
+// Создаем 1000 случайных заявок
 const boards: ApiSchemas["Board"][] = generateRandomBoards(1000);
 
 export const boardsHandlers = [
