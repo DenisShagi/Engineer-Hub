@@ -18,10 +18,14 @@ import {
 import { Switch } from "@/shared/ui/kit/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/kit/tabs";
 import { ApiSchemas } from "@/shared/api/schema";
+import { useBoardsList } from './use-boards-list'
 
 type BoardsSortOption = "createdAt" | "updatedAt" | "lastOpenedAt" | "name";
 
 function BoardsListPage() {
+
+  useBoardsList({})
+
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -51,39 +55,28 @@ function BoardsListPage() {
     setBoards([]);
   }, [sort, showFavorites]);
 
-  const boardsQuery = rqClient.useQuery("get", "/boards", {
-    params: {
-      query: {
-        page,
-        limit: 20,
-        sort,
-        search: debouncedSearch || undefined,
-        isFavorite: showFavorites,
-      },
-    },
-    enabled: true,
-  });
+
 
   // Обновляем список досок при получении новых данных
-  useEffect(() => {
-    if (boardsQuery.data?.list) {
-      if (page === 1) {
-        setBoards(boardsQuery.data.list);
-      } else {
-        setBoards((prev) => [...prev, ...boardsQuery.data.list]);
-      }
-      setHasMore(page < (boardsQuery.data.totalPages || 1));
-      setIsLoadingMore(false);
-    }
-  }, [boardsQuery.data, page]);
+  // useEffect(() => {
+  //   if (boardsQuery.data?.list) {
+  //     if (page === 1) {
+  //       setBoards(boardsQuery.data.list);
+  //     } else {
+  //       setBoards((prev) => [...prev, ...boardsQuery.data.list]);
+  //     }
+  //     setHasMore(page < (boardsQuery.data.totalPages || 1));
+  //     setIsLoadingMore(false);
+  //   }
+  // }, [boardsQuery.data, page]);
 
-  // Функция для загрузки следующей страницы
-  const loadMore = useCallback(() => {
-    if (!isLoadingMore && hasMore && !boardsQuery.isPending) {
-      setIsLoadingMore(true);
-      setPage((prevPage) => prevPage + 1);
-    }
-  }, [isLoadingMore, hasMore, boardsQuery.isPending]);
+  // // Функция для загрузки следующей страницы
+  // const loadMore = useCallback(() => {
+  //   if (!isLoadingMore && hasMore && !boardsQuery.isPending) {
+  //     setIsLoadingMore(true);
+  //     setPage((prevPage) => prevPage + 1);
+  //   }
+  // }, [isLoadingMore, hasMore, boardsQuery.isPending]);
 
   // Настройка IntersectionObserver для бесконечной прокрутки
   useEffect(() => {
@@ -94,7 +87,7 @@ function BoardsListPage() {
     observer.current = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasMore) {
-          loadMore();
+          // loadMore();
         }
       },
       { threshold: 0.5 },
@@ -109,7 +102,7 @@ function BoardsListPage() {
         observer.current.disconnect();
       }
     };
-  }, [loadMore, hasMore]);
+  }, [hasMore]);
 
   const createBoardMutation = rqClient.useMutation("post", "/boards", {
     onSettled: async () => {
@@ -220,7 +213,7 @@ function BoardsListPage() {
         </form>
       </div>
 
-      {boardsQuery.isPending && page === 1 ? (
+      {false ? (
         <div className="text-center py-10">Загрузка...</div>
       ) : (
         <>
@@ -275,7 +268,7 @@ function BoardsListPage() {
             ))}
           </div>
 
-          {boards.length === 0 && !boardsQuery.isPending && (
+          {boards.length === 0  && (
             <div className="text-center py-10">Доски не найдены</div>
           )}
 

@@ -1,4 +1,6 @@
 import { rqClient } from "@/shared/api/instance";
+import { keepPreviousData } from "@tanstack/query-core";
+import { RefCallback, useCallback } from "react";
 
 type UseBoardsListParams = {
   limit?: number;
@@ -13,29 +15,62 @@ export function useBoardsList({
   search,
   sort,
 }: UseBoardsListParams) {
-  const boardsListQuery = rqClient.useInfiniteQuery(
-    "get",
-    "/boards",
-    {
-      params: {
-        query: {
-          page: 1,
-          limit,
-          isFavorite,
-          search,
-          sort,
+  const { fetchNextPage, data, isFetchingNextPage, isPending, hasNextPage } =
+    rqClient.useInfiniteQuery(
+      "get",
+      "/boards",
+      {
+        params: {
+          query: {
+            page: 1,
+            limit,
+            isFavorite,
+            search,
+            sort,
+          },
         },
       },
+      {
+        initialPageParam: 1,
+        pageParamName: "page",
+        getNextPageParam: (lastPage, _, lastPageParams) =>
+          Number(lastPageParams) < lastPage.totalPages
+            ? Number(lastPageParams) + 1
+            : null,
+
+        placeholderData: keepPreviousData,
+      },
+    );
+
+  const cursorRef: RefCallback<HTMLDivElement> = useCallback(
+    (el) => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            fetchNextPage();
+          }
+        },
+        { threshold: 0.5 },
+      );
+
+      if (el) {
+        observer.observe(el);
+
+        return () => {
+          observer.disconnect();
+        };
+      }
     },
-    {
-      initialPageParam: 1,
-      pageParamName: "page",
-      getNextPageParam: (LastPage, _, LastPageParams) =>
-        Number(LastPageParams) < LastPage.totalPages
-          ? Number(LastPageParams) + 1
-          : null,
-    },
+    [fetchNextPage],
   );
 
-	console.log(boardsListQuery.data)
+  const boards = data?.pages.flatMap((page) => page.list) ?? [];
+
+  return {
+    boards,
+    isFetchingNextPage,
+    isPending,
+    hasNextPage,
+    cursorRef,
+  };
 }
