@@ -1,4 +1,4 @@
-import { HttpResponse } from "msw";
+import { delay, HttpResponse } from "msw";
 import { http } from "../http";
 import { ApiSchemas } from "../../schema";
 import { verifyTokenOrThrow } from "../session";
@@ -83,10 +83,16 @@ function generateRandomBoards(count: number): ApiSchemas["Board"][] {
   for (let i = 0; i < count; i++) {
     const createdAt = randomDate();
     const updatedAt = new Date(
-      new Date(createdAt).getTime() + Math.random() * 86400000 * 10,
+      Math.min(
+        new Date(createdAt).getTime() + Math.random() * 86400000 * 10,
+        new Date().getTime(),
+      ),
     ).toISOString(); // Добавляем до 10 дней
     const lastOpenedAt = new Date(
-      new Date(updatedAt).getTime() + Math.random() * 86400000 * 5,
+      Math.min(
+        new Date(updatedAt).getTime() + Math.random() * 86400000 * 5,
+        new Date().getTime(),
+      ),
     ).toISOString(); // Добавляем до 5 дней
 
     result.push({
@@ -239,7 +245,7 @@ export const boardsHandlers = [
     await verifyTokenOrThrow(request);
     const { boardId } = params;
     const index = boards.findIndex((board) => board.id === boardId);
-
+    await delay(1000);
     if (index === -1) {
       return HttpResponse.json(
         { message: "Board not found", code: "NOT_FOUND" },

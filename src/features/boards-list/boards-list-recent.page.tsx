@@ -31,8 +31,8 @@ function BoardsListPage() {
       sidebar={<BoardsSidebar />}
       header={
         <BoardsListLayoutHeader
-          title="Последние доски"
-          description="Здесь вы можете просматривать и управлять своими последними досками"
+          title="Последние заявки"
+          description="Здесь вы можете просматривать и управлять своими последними заявками"
           actions={
             <ViewModeToggle
               value={viewMode}
