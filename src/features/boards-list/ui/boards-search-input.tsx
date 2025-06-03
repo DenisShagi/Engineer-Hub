@@ -12,7 +12,7 @@ export function BoardsSearchInput({ value, onChange }: BoardsSearchInputProps) {
       placeholder="Введите название заявки..."
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full"
+      className="w-[200px]"
     />
   );
 }

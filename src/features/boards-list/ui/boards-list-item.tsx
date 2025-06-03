@@ -24,6 +24,8 @@ export function BoardsListItem({
   rightActions,
   menuActions,
 }: BoardsListItemProps) {
+
+
   return (
     <div className="flex items-center gap-4 p-4 border-b last:border-b-0">
       <div className="flex-grow min-w-0">
