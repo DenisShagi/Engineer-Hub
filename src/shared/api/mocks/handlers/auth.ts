@@ -1,13 +1,12 @@
 import { ApiSchemas } from "../../schema";
+import { http } from "../http";
+import { delay, HttpResponse } from "msw";
 import {
   createRefreshTokenCookie,
   generateTokens,
   verifyToken,
 } from "../session";
-import { http } from "../http";
-import { delay, HttpResponse } from "msw";
 
-const userPasswords = new Map<string, string>();
 const mockUsers: ApiSchemas["User"][] = [
   {
     id: "1",
@@ -15,6 +14,7 @@ const mockUsers: ApiSchemas["User"][] = [
   },
 ];
 
+const userPasswords = new Map<string, string>();
 userPasswords.set("admin@gmail.com", "123456");
 
 export const authHandlers = [
@@ -40,6 +40,7 @@ export const authHandlers = [
       userId: user.id,
       email: user.email,
     });
+
     return HttpResponse.json(
       {
         accessToken: accessToken,
