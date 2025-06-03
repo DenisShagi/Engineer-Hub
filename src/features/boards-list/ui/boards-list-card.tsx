@@ -2,7 +2,11 @@ import { ROUTES } from "@/shared/model/routes";
 import { Button } from "@/shared/ui/kit/button";
 import { Card, CardFooter, CardHeader } from "@/shared/ui/kit/card";
 import { Link, href } from "react-router-dom";
-
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/shared/ui/kit/tooltip";
 interface BoardsListCardProps {
   board: {
     id: string;
@@ -19,6 +23,7 @@ export function BoardsListCard({
   bottomActions,
   rightTopActions,
 }: BoardsListCardProps) {
+
   return (
     <Card className="relative">
       {<div className="absolute top-2 right-2">{rightTopActions}</div>}
@@ -30,7 +35,14 @@ export function BoardsListCard({
             className="text-left justify-start h-auto p-0"
           >
             <Link to={href(ROUTES.BOARD, { boardId: board.id })}>
-              <span className="text-xl font-medium">{board.name}</span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="text-xl font-medium truncate max-w-[300px]">
+                    {board.name}
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>{board.name}</TooltipContent>
+              </Tooltip>
             </Link>
           </Button>
           <div className="text-sm text-gray-500">

@@ -43,10 +43,14 @@ function BoardsListPage() {
         hasCursor={boardsQuery.hasNextPage}
         mode={viewMode}
         renderList={() =>
-          boardsQuery.boards.map((board) => <BoardItem board={board} />)
+          boardsQuery.boards.map((board) => (
+            <BoardItem key={board.id} board={board} />
+          ))
         }
         renderGrid={() =>
-          boardsQuery.boards.map((board) => <BoardCard board={board} />)
+          boardsQuery.boards.map((board) => (
+            <BoardCard key={board.id} board={board} />
+          ))
         }
       />
     </BoardsListLayout>
