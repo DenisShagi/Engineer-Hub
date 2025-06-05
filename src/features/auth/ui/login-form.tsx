@@ -34,7 +34,7 @@ export function LoginForm() {
 
   const { errorMessage, isPending, login, resetError } = useLogin();
 
-  const onSubmit = form.handleSubmit(login);
+const onSubmit = form.handleSubmit((values) => login(values));
 
   return (
     <Form {...form}>
