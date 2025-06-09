@@ -47,7 +47,7 @@ function BoardPage() {
           }
         }
         if (ViewState.type === "idle") {
-          if (e.key === "s") {
+          if (e.key === "s" || e.key === 'ы') {
             goToAddSticker();
           }
         }
