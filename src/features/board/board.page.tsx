@@ -4,46 +4,9 @@ import { ArrowRightIcon, StickerIcon } from "lucide-react";
 import { Button } from "@/shared/ui/kit/button";
 import { useBoardViewState } from "./view-state";
 import { useNodes } from "./nodes";
-import { RefCallBack } from "react-hook-form";
-import { useCallback, useState } from "react";
+import { useCanvasRef } from "./use-canvas-rect";
+import { Ref } from "react";
 
-type CanvasRect = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-};
-
-const useCanvasRef = () => {
-  const [canvasRect, setCanvasRect] = useState<CanvasRect>();
-
-  const canvasRef: RefCallBack<HTMLDivElement> = useCallback((el) => {
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const { width, height } = entry.contentRect;
-        const {x, y} = entry.target.getBoundingClientRect()
-
-        setCanvasRect({
-          x,
-          y,
-          width,
-          height,
-        });
-      }
-    });
-    if (el) {
-      observer.observe(el);
-      return () => {
-        observer.disconnect();
-      };
-    }
-  }, []);
-
-  return {
-    canvasRef,
-    canvasRect,
-  };
-};
 function BoardPage() {
   // const params = useParams<PathParams[typeof ROUTES.BOARD]>();
 
@@ -52,7 +15,20 @@ function BoardPage() {
   const { canvasRef, canvasRect } = useCanvasRef();
 
   return (
-    <Layout>
+    <Layout
+      onKeyDown={(e) => {
+        if (ViewState.type === "add-sticker") {
+          if (e.key === "Escape") {
+            goToIdle();
+          }
+        }
+        if (ViewState.type === "idle") {
+          if (e.key === "s") {
+            goToAddSticker();
+          }
+        }
+      }}
+    >
       <Dots />
       <Canvas
         ref={canvasRef}
@@ -94,9 +70,12 @@ function BoardPage() {
 
 export const Component = BoardPage;
 
-function Layout({ children }: { children: React.ReactNode }) {
+function Layout({
+  children,
+  ...props
+}: { children: React.ReactNode } & React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className="grow relative" tabIndex={0}>
+    <div className="grow relative" tabIndex={0} {...props}>
       {children}
     </div>
   );
