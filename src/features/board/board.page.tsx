@@ -3,24 +3,77 @@
 import { ArrowRightIcon, StickerIcon } from "lucide-react";
 import { Button } from "@/shared/ui/kit/button";
 import { useBoardViewState } from "./view-state";
-import { useNodes } from './nodes'
+import { useNodes } from "./nodes";
+import { RefCallBack } from "react-hook-form";
+import { useCallback, useState } from "react";
 
+type CanvasRect = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
+const useCanvasRef = () => {
+  const [canvasRect, setCanvasRect] = useState<CanvasRect>();
+
+  const canvasRef: RefCallBack<HTMLDivElement> = useCallback((el) => {
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect;
+        const {x, y} = entry.target.getBoundingClientRect()
+
+        setCanvasRect({
+          x,
+          y,
+          width,
+          height,
+        });
+      }
+    });
+    if (el) {
+      observer.observe(el);
+      return () => {
+        observer.disconnect();
+      };
+    }
+  }, []);
+
+  return {
+    canvasRef,
+    canvasRect,
+  };
+};
 function BoardPage() {
   // const params = useParams<PathParams[typeof ROUTES.BOARD]>();
 
   const { nodes, addSticker } = useNodes();
   const { ViewState, goToAddSticker, goToIdle } = useBoardViewState();
+  const { canvasRef, canvasRect } = useCanvasRef();
+
   return (
     <Layout>
       <Dots />
-      <Canvas>
+      <Canvas
+        ref={canvasRef}
+        onClick={(e) => {
+          if (ViewState.type === "add-sticker" && canvasRect) {
+            addSticker({
+              text: "Default",
+              x: e.clientX - canvasRect.x,
+              y: e.clientY - canvasRect.y,
+            });
+            goToIdle();
+          }
+        }}
+      >
         {nodes.map((node) => (
           <Sticker key={node.id} text={node.text} x={node.x} y={node.y} />
         ))}
       </Canvas>
-      <Actions> 
+      <Actions>
         <ActionButton
-          isActive={ViewState.type === 'add-sticker'}
+          isActive={ViewState.type === "add-sticker"}
           onClick={() => {
             if (ViewState.type === "add-sticker") {
               goToIdle();
@@ -57,10 +110,14 @@ function Dots() {
 
 function Canvas({
   children,
+  ref,
   ...props
-}: { children: React.ReactNode } & React.HTMLAttributes<HTMLDivElement>) {
+}: {
+  children: React.ReactNode;
+  ref: Ref<HTMLDivElement>;
+} & React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div {...props} className="absolute inset-0">
+    <div ref={ref} {...props} className="absolute inset-0">
       {children}
     </div>
   );

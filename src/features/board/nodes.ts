@@ -51,5 +51,6 @@ export function useNodes() {
   };
   return {
     nodes,
+		addSticker
   };
 }
