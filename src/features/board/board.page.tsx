@@ -5,13 +5,37 @@ import { Button } from "@/shared/ui/kit/button";
 import { useBoardViewState } from "./view-state";
 import { useNodes } from "./nodes";
 import { useCanvasRef } from "./use-canvas-rect";
-import { Ref } from "react";
+import { Ref, useEffect, useRef } from "react";
+
+function useLayoutFocus() {
+  const layoutRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (layoutRef.current) {
+      layoutRef.current.focus();
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        layoutRef.current?.focus();
+      }
+    };
+    window.addEventListener("visibilityChange", handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener("visibilityChange", handleVisibilityChange);
+    };
+  }, [layoutRef]);
+
+  return layoutRef;
+}
 
 function BoardPage() {
   // const params = useParams<PathParams[typeof ROUTES.BOARD]>();
 
   const { nodes, addSticker } = useNodes();
   const { ViewState, goToAddSticker, goToIdle } = useBoardViewState();
+  const focusRef = useLayoutFocus()
   const { canvasRef, canvasRect } = useCanvasRef();
 
   return (
@@ -28,6 +52,7 @@ function BoardPage() {
           }
         }
       }}
+      ref={focusRef}
     >
       <Dots />
       <Canvas
@@ -72,10 +97,11 @@ export const Component = BoardPage;
 
 function Layout({
   children,
+  ref,
   ...props
-}: { children: React.ReactNode } & React.HTMLAttributes<HTMLDivElement>) {
+}: { children: React.ReactNode, ref: Ref<HTMLDivElement> } & React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className="grow relative" tabIndex={0} {...props}>
+    <div className="grow relative" tabIndex={0} ref={ref} {...props}>
       {children}
     </div>
   );
