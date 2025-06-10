@@ -2,10 +2,11 @@
 // import { useParams } from "react-router-dom";
 import { ArrowRightIcon, StickerIcon } from "lucide-react";
 import { Button } from "@/shared/ui/kit/button";
-import { useBoardViewState } from "./view-state";
+import { useViewModel } from "./view-model";
 import { useNodes } from "./nodes";
 import { useCanvasRef } from "./use-canvas-rect";
 import { Ref, useEffect, useRef } from "react";
+import clsx from "clsx";
 
 function useLayoutFocus() {
   const layoutRef = useRef<HTMLDivElement>(null);
@@ -34,21 +35,21 @@ function BoardPage() {
   // const params = useParams<PathParams[typeof ROUTES.BOARD]>();
 
   const { nodes, addSticker } = useNodes();
-  const { ViewState, goToAddSticker, goToIdle } = useBoardViewState();
-  const focusRef = useLayoutFocus()
+  const viewModel = useViewModel();
+  const focusRef = useLayoutFocus();
   const { canvasRef, canvasRect } = useCanvasRef();
 
   return (
     <Layout
       onKeyDown={(e) => {
-        if (ViewState.type === "add-sticker") {
+        if (viewModel.viewState.type === "add-sticker") {
           if (e.key === "Escape") {
-            goToIdle();
+            viewModel.goToIdle();
           }
         }
-        if (ViewState.type === "idle") {
-          if (e.key === "s" || e.key === 'ы') {
-            goToAddSticker();
+        if (viewModel.viewState.type === "idle") {
+          if (e.key === "s" || e.key === "ы") {
+            viewModel.goToAddSticker();
           }
         }
       }}
@@ -58,28 +59,43 @@ function BoardPage() {
       <Canvas
         ref={canvasRef}
         onClick={(e) => {
-          if (ViewState.type === "add-sticker" && canvasRect) {
+          if (viewModel.viewState.type === "add-sticker" && canvasRect) {
             addSticker({
               text: "Default",
               x: e.clientX - canvasRect.x,
               y: e.clientY - canvasRect.y,
             });
-            goToIdle();
+            viewModel.goToIdle();
           }
         }}
       >
         {nodes.map((node) => (
-          <Sticker key={node.id} text={node.text} x={node.x} y={node.y} />
+          <Sticker
+            key={node.id}
+            text={node.text}
+            x={node.x}
+            y={node.y}
+            selected={viewModel.viewState.type === 'idle' && viewModel.viewState.selectedIds.has(node.id)}
+            onClick={(e) => {
+              if (viewModel.viewState.type === "idle") {
+                if (e.ctrlKey || e.shiftKey) {
+                  viewModel.selection([node.id], "toggle");
+                } else {
+                  viewModel.selection([node.id], "replace");
+                }
+              }
+            }}
+          />
         ))}
       </Canvas>
       <Actions>
         <ActionButton
-          isActive={ViewState.type === "add-sticker"}
+          isActive={viewModel.viewState.type === "add-sticker"}
           onClick={() => {
-            if (ViewState.type === "add-sticker") {
-              goToIdle();
+            if (viewModel.viewState.type === "add-sticker") {
+              viewModel.goToIdle();
             } else {
-              goToAddSticker();
+              viewModel.goToAddSticker();
             }
           }}
         >
@@ -99,7 +115,10 @@ function Layout({
   children,
   ref,
   ...props
-}: { children: React.ReactNode, ref: Ref<HTMLDivElement> } & React.HTMLAttributes<HTMLDivElement>) {
+}: {
+  children: React.ReactNode;
+  ref: Ref<HTMLDivElement>;
+} & React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div className="grow relative" tabIndex={0} ref={ref} {...props}>
       {children}
@@ -128,14 +147,30 @@ function Canvas({
   );
 }
 
-function Sticker({ text, x, y }: { text: string; x: number; y: number }) {
+function Sticker({
+  text,
+  x,
+  y,
+  onClick,
+  selected,
+}: {
+  text: string;
+  x: number;
+  y: number;
+  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  selected: boolean;
+}) {
   return (
-    <div
-      className="absolute bg-yellow-300 px-2 py-4 rounded-xs shadow-md"
+    <button
+      className={clsx(
+        "absolute bg-yellow-300 px-2 py-4 rounded-xs shadow-md",
+        selected && "outline outline-2 outline-blue-500",
+      )}
       style={{ transform: `translate(${x}px, ${y}px)` }}
+      onClick={onClick}
     >
       {text}
-    </div>
+    </button>
   );
 }
 
