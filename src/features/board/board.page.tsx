@@ -2,124 +2,44 @@
 // import { useParams } from "react-router-dom";
 import { ArrowRightIcon, StickerIcon } from "lucide-react";
 import { Button } from "@/shared/ui/kit/button";
-import { useViewModel } from "./view-model";
-import { useNodes } from "./nodes";
-import { useCanvasRef } from "./use-canvas-rect";
+import { useViewState } from "./model/view-state";
+import { useNodes } from "./model/nodes";
+import { useCanvasRef } from "./hooks/use-canvas-rect";
 import React, { Ref } from "react";
 import clsx from "clsx";
-import { useLayoutFocus } from "./use-layout-focus";
+import { useLayoutFocus } from "./hooks/use-layout-focus";
 // import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/kit/tooltip'
 import { getCursorClass } from "@/shared/lib/cursor-manager";
-
-type ViewModelNode = {
-  id: string;
-  text: string;
-  x: number;
-  y: number;
-  isSelected?: boolean;
-  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-};
-
-type ViewModel = {
-  nodes: ViewModelNode[];
-  layout?: {
-    onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
-  };
-  canvas?: {
-    onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
-  };
-  actions?: {
-    addSticker?: {
-      onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-      isActive?: boolean;
-    };
-  };
-};
+import { useViewModel } from "./view-model/use-view-model";
 
 function BoardPage() {
   // const params = useParams<PathParams[typeof ROUTES.BOARD]>();
 
-  const { nodes, addSticker } = useNodes();
   const { canvasRef, canvasRect } = useCanvasRef();
-  const viewModelLast = useViewModel();
+  const nodesModel = useNodes();
+  const viewStateModel = useViewState();
   const focusRef = useLayoutFocus();
 
-  let viewModel: ViewModel;
-
-  switch (viewModelLast.viewState.type) {
-    case "add-sticker":
-      viewModel = {
-        nodes,
-        layout: {
-          onKeyDown: (e) => {
-            if (e.key === "Escape") {
-              viewModelLast.goToIdle();
-            }
-          },
-        },
-        actions: {
-          addSticker: {
-            isActive: true,
-            onClick: () => viewModelLast.goToIdle(),
-          },
-        },
-        canvas: {
-          onClick: (e) => {
-            if (!canvasRect) return;
-            addSticker({
-              text: "Default",
-              x: e.clientX - canvasRect.x,
-              y: e.clientY - canvasRect.y,
-            });
-            viewModelLast.goToIdle();
-          },
-        },
-      };
-      break;
-
-    case "idle": {
-      const viewState = viewModelLast.viewState;
-      viewModel = {
-        nodes: nodes.map((node) => ({
-          ...node,
-          isSelected: viewState.selectedIds.has(node.id),
-          onClick: (e) => {
-            if (e.ctrlKey || e.shiftKey) {
-              viewModelLast.selection([node.id], "toggle");
-            } else {
-              viewModelLast.selection([node.id], "replace");
-            }
-          },
-        })),
-        layout: {
-          onKeyDown: (e) => {
-            if (e.key === "s" || e.key === "ы") {
-              viewModelLast.goToAddSticker();
-            }
-          },
-        },
-        actions: {
-          addSticker: {
-            isActive: false,
-            onClick: () => viewModelLast.goToAddSticker(),
-          },
-        },
-      };
-      break;
-    }
-
-    default:
-      throw new Error("Invalid View State");
-  }
+  const viewModel = useViewModel({
+    canvasRect,
+    nodesModel,
+    viewStateModel,
+  });
 
   return (
     <Layout onKeyDown={viewModel.layout?.onKeyDown} ref={focusRef}>
       <Dots />
+
       <Canvas
         ref={canvasRef}
         onClick={viewModel.canvas?.onClick}
-        className={clsx(getCursorClass(viewModelLast.viewState.type))}
+        className={clsx(getCursorClass(viewStateModel.viewState.type))}
       >
+        <Overlay
+          onClick={viewModel.overlay?.onClick}
+          onMouseDown={viewModel.overlay?.onMouseDown}
+          onMouseUp={viewModel.overlay?.onMouseUp}
+        />
         {viewModel.nodes.map((node) => (
           <Sticker
             key={node.id}
@@ -162,6 +82,25 @@ function BoardPage() {
 }
 
 export const Component = BoardPage;
+
+function Overlay({
+  onClick,
+  onMouseDown,
+  onMouseUp,
+}: {
+  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
+  onMouseDown?: (e: React.MouseEvent<HTMLDivElement>) => void;
+  onMouseUp?: (e: React.MouseEvent<HTMLDivElement>) => void;
+}) {
+  return (
+    <div
+      className="absolute inset-0"
+      onClick={onClick}
+      onMouseDown={onMouseDown}
+      onMouseUp={onMouseUp}
+    ></div>
+  );
+}
 
 function Layout({
   children,
