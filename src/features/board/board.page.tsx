@@ -11,6 +11,7 @@ import { useLayoutFocus } from "./hooks/use-layout-focus";
 // import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/ui/kit/tooltip'
 import { getCursorClass } from "@/shared/lib/cursor-manager";
 import { useViewModel } from "./view-model/use-view-model";
+import { Rect } from "./domain/rect";
 
 function BoardPage() {
   // const params = useParams<PathParams[typeof ROUTES.BOARD]>();
@@ -52,6 +53,9 @@ function BoardPage() {
           />
         ))}
       </Canvas>
+      {viewModel.selectionWindow && (
+        <SelectionWindow {...viewModel.selectionWindow} />
+      )}
       <Actions>
         {/* <Tooltip> */}
         {/* <TooltipTrigger> */}
@@ -59,7 +63,7 @@ function BoardPage() {
           isActive={viewModel.actions?.addSticker?.isActive}
           onClick={viewModel.actions?.addSticker?.onClick}
         >
-          <StickerIcon  />
+          <StickerIcon />
         </ActionButton>
         {/* </TooltipTrigger> */}
         {/* <TooltipContent
@@ -83,6 +87,19 @@ function BoardPage() {
 }
 
 export const Component = BoardPage;
+
+function SelectionWindow({ height, width, x, y }: Rect) {
+  return (
+    <div
+      className="absolute inset-0"
+      style={{
+        transform: `translate${x}px, ${y}px`,
+        width: width,
+        height: height,
+      }}
+    ></div>
+  );
+}
 
 function Overlay({
   onClick,

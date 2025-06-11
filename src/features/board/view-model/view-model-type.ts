@@ -1,3 +1,5 @@
+import { Rect } from "../domain/rect";
+
 type ViewModelNode = {
   id: string;
   text: string;
@@ -9,7 +11,7 @@ type ViewModelNode = {
 
 export type ViewModel = {
   nodes: ViewModelNode[];
-	selectionWindow?: {}
+  selectionWindow?: Rect;
   layout?: {
     onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void;
   };
