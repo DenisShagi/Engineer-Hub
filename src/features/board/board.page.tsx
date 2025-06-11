@@ -59,7 +59,7 @@ function BoardPage() {
           isActive={viewModel.actions?.addSticker?.isActive}
           onClick={viewModel.actions?.addSticker?.onClick}
         >
-          <StickerIcon />
+          <StickerIcon  />
         </ActionButton>
         {/* </TooltipTrigger> */}
         {/* <TooltipContent
