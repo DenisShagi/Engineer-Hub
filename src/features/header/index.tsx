@@ -11,7 +11,7 @@ export function AppHeader() {
   }
 
   return (
-    <header className="bg-background border-b border-border/40 shadow-sm py-3 px-4 mb-6">
+    <header className="bg-background border-b border-border/40 shadow-sm py-3 px-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <Link
           to={ROUTES.BOARDS}

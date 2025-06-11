@@ -49,14 +49,14 @@ useEffect(() => {
     <div
       onClick={handleClick}
       className={clsx(
-        "fixed inset-0 bg-slate-900/60 backdrop-blur pt-10 pb-10 z-50",
+        "fixed inset-0 bg-slate-900/60 backdrop-blur flex items-center justify-center z-50",
         className,
       )}
     >
       <div
         data-id="modal"
         className={clsx(
-          "bg-white rounded-lg min-h-[220px] w-full mx-auto relative flex flex-col",
+          "bg-white rounded-lg min-h-[220px] w-full mx-auto  relative flex flex-col",
           {
             md: "max-w-[640px] w-full",
             full: "mx-5 max-w-full",
