@@ -1,4 +1,5 @@
 import { ROUTES } from "@/shared/model/routes";
+import { StatusBadge } from "@/shared/ui/status/status-badge";
 import { Button } from "@/shared/ui/kit/button";
 import { Card, CardFooter, CardHeader } from "@/shared/ui/kit/card";
 import { Link, href } from "react-router-dom";
@@ -7,12 +8,16 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/shared/ui/kit/tooltip";
+
 interface BoardsListCardProps {
   board: {
     id: string;
     name: string;
     createdAt: string;
     lastOpenedAt: string;
+    status?: string;
+    phone?: string;
+    fullName?: string;
   };
   rightTopActions?: React.ReactNode;
   bottomActions?: React.ReactNode;
@@ -23,7 +28,7 @@ export function BoardsListCard({
   bottomActions,
   rightTopActions,
 }: BoardsListCardProps) {
-
+  console.log(board);
   return (
     <Card className="relative">
       {<div className="absolute top-2 right-2">{rightTopActions}</div>}
@@ -45,6 +50,14 @@ export function BoardsListCard({
               </Tooltip>
             </Link>
           </Button>
+          {/* <div className="text-sm text-gray-500">Статус: {board.status}</div> */}
+          <div className="text-sm text-gray-500">
+            <StatusBadge status={board.status} />
+          </div>
+          <div className="text-sm text-gray-500">
+            ФИО: {board.fullName}
+          </div>
+          <div className="text-sm text-gray-500">Телефон: {board.phone}</div>
           <div className="text-sm text-gray-500">
             Создано: {new Date(board.createdAt).toLocaleDateString()}
           </div>
