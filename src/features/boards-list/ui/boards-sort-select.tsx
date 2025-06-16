@@ -27,8 +27,8 @@ export function BoardsSortSelect({
         <SelectValue placeholder="Сортировка" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="lastOpenedAt">По дате открытия</SelectItem>
         <SelectItem value="createdAt">По дате создания</SelectItem>
+        <SelectItem value="lastOpenedAt">По дате открытия</SelectItem>
         <SelectItem value="updatedAt">По дате обновления</SelectItem>
         <SelectItem value="name">По имени</SelectItem>
       </SelectContent>

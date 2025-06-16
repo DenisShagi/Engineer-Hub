@@ -1,30 +1,26 @@
 type StatusAppearance = {
   text: string;
   color: string;
-  icon: string;
+  icon?: string;
 };
 
 export const formatStatus = (status: string): StatusAppearance => {
   const statusMap: Record<string, StatusAppearance> = {
     new: {
       text: "Новая",
-      color: "bg-gray-200 text-gray-800",
-      icon: "n",
+      color: "bg-blue-200 text-blue-900",
     },
     in_progress: {
       text: "В работе",
       color: "bg-yellow-200 text-yellow-900",
-      icon: "w",
     },
     done: {
       text: "Завершено",
       color: "bg-green-200 text-green-800",
-      icon: "c",
     },
     rejected: {
       text: "Отклонено",
       color: "bg-red-200 text-red-800",
-      icon: "x",
     },
   };
 

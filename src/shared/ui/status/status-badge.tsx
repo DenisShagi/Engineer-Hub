@@ -10,13 +10,12 @@ export const StatusBadge = ({ status, className = "" }: StatusBadgeProps) => {
 		return null
 	}
 	
-  const { text, color, icon } = formatStatus(status);
+  const { text, color } = formatStatus(status);
 
   return (
     <span
       className={`inline-flex items-center gap-1 rounded-2xl px-2 py-1 text-xs font-medium  ${color} ${className}`}
     >
-			<span>{icon}</span>
       <span>{text}</span>
     </span>
   );

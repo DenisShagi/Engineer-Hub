@@ -15,6 +15,7 @@ interface BoardsListCardProps {
     name: string;
     createdAt: string;
     lastOpenedAt: string;
+    updatedAt: string;
     status?: string;
     phone?: string;
     fullName?: string;
@@ -28,7 +29,6 @@ export function BoardsListCard({
   bottomActions,
   rightTopActions,
 }: BoardsListCardProps) {
-  console.log(board);
   return (
     <Card className="relative">
       {<div className="absolute top-2 right-2">{rightTopActions}</div>}
@@ -54,9 +54,7 @@ export function BoardsListCard({
           <div className="text-sm text-gray-500">
             <StatusBadge status={board.status} />
           </div>
-          <div className="text-sm text-gray-500">
-            ФИО: {board.fullName}
-          </div>
+          <div className="text-sm text-gray-500">ФИО: {board.fullName}</div>
           <div className="text-sm text-gray-500">Телефон: {board.phone}</div>
           <div className="text-sm text-gray-500">
             Создано: {new Date(board.createdAt).toLocaleDateString()}
@@ -64,6 +62,10 @@ export function BoardsListCard({
           <div className="text-sm text-gray-500">
             Последнее открытие:{" "}
             {new Date(board.lastOpenedAt).toLocaleDateString()}
+          </div>
+          <div className="text-sm text-gray-500">
+            Последнее обновление:{" "}
+            {new Date(board.updatedAt).toLocaleDateString()}
           </div>
         </div>
       </CardHeader>

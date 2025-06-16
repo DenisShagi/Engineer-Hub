@@ -7,6 +7,7 @@ import {
   DropdownMenuTrigger,
 } from "@/shared/ui/kit/dropdown-menu";
 import { MoreHorizontalIcon } from "lucide-react";
+import { StatusBadge } from "@/shared/ui/status/status-badge";
 
 interface BoardsListItemProps {
   board: {
@@ -14,6 +15,10 @@ interface BoardsListItemProps {
     name: string;
     createdAt: string;
     lastOpenedAt: string;
+    updatedAt: string;
+    status?: string;
+    phone?: string;
+    fullName?: string;
   };
   rightActions?: React.ReactNode;
   menuActions?: React.ReactNode;
@@ -25,26 +30,42 @@ export function BoardsListItem({
   menuActions,
 }: BoardsListItemProps) {
 
-
   return (
     <div className="flex items-center gap-4 p-4 border-b last:border-b-0">
       <div className="flex-grow min-w-0">
-        <Button
-          asChild
-          variant="link"
-          className="text-left justify-start h-auto p-0"
-        >
-          <Link to={href(ROUTES.BOARD, { boardId: board.id })}>
-            <span className="text-lg font-medium truncate block">
-              {board.name}
-            </span>
-          </Link>
-        </Button>
+        <div className="flex gap-2 items-center">
+          <Button
+            asChild
+            variant="link"
+            className="text-left justify-start h-auto p-0"
+          >
+            <Link to={href(ROUTES.BOARD, { boardId: board.id })}>
+              <span className="text-lg font-medium truncate block">
+                {board.name}
+              </span>
+            </Link>
+          </Button>
+          <span className="text-sm text-gray-500">
+            <StatusBadge status={board.status} />
+          </span>
+        </div>
+
+        <div className="flex gap-4 text-gray-500 mt-1 text-sm">
+          ФИО: {board.fullName}
+        </div>
+        <div className="flex gap-4 text-gray-500 mt-1 text-sm">
+          Телефон: {board.phone}
+        </div>
+
         <div className="flex gap-4 text-sm text-gray-500 mt-1">
           <div>Создано: {new Date(board.createdAt).toLocaleDateString()}</div>
           <div>
             Последнее открытие:{" "}
             {new Date(board.lastOpenedAt).toLocaleDateString()}
+          </div>
+          <div>
+            Последнее обновление:{" "}
+            {new Date(board.updatedAt).toLocaleDateString()}
           </div>
         </div>
       </div>
