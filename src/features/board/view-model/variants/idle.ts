@@ -1,6 +1,9 @@
-import { selectItems } from "../../domain/selection";
+import { distanceFromPoints } from '../../domain/point'
+import { SelectionModifier, selectItems } from "../../domain/selection";
+import { CanvasRect } from "../../hooks/use-canvas-rect";
 import { ViewModelParams } from "../view-model-params";
 import { ViewModel } from "../view-model-type";
+import { goToAddSticker } from "./add-sticker";
 
 export type IdleViewState = {
   type: "idle";
@@ -14,55 +17,71 @@ export type IdleViewState = {
 export function useIdleViewModel({
   nodesModel,
   setViewState,
+  canvasRect,
 }: ViewModelParams) {
+  const select = (
+    lastState: IdleViewState,
+    ids: string[],
+    modif: SelectionModifier,
+  ) => {
+    setViewState({
+      ...lastState,
+      selectedIds: selectItems(lastState.selectedIds, ids, modif),
+    });
+  };
   return (idleState: IdleViewState): ViewModel => ({
     nodes: nodesModel.nodes.map((node) => ({
       ...node,
       isSelected: idleState.selectedIds.has(node.id),
       onClick: (e) => {
         if (e.ctrlKey || e.shiftKey) {
-          setViewState({
-            ...idleState,
-            selectedIds: selectItems(
-              idleState.selectedIds,
-              [node.id],
-              "toggle",
-            ),
-          });
+          select(idleState, [node.id], "toggle");
         } else {
-          setViewState({
-            ...idleState,
-            selectedIds: selectItems(
-              idleState.selectedIds,
-              [node.id],
-              "replace",
-            ),
-          });
+          select(idleState, [node.id], "replace");
         }
       },
     })),
     layout: {
       onKeyDown: (e) => {
         if (e.key === "s" || e.key === "ы") {
-          viewStateModel.goToAddSticker();
+          setViewState(goToAddSticker());
         }
       },
     },
 
     overlay: {
       onClick: () => {
-        viewStateModel.selection([], "replace");
+        select(idleState, [], "replace");
       },
       onMouseDown(e) {
-        console.log("onMouseDown", e);
+        if (!canvasRect) return;
+        setViewState({
+          ...idleState,
+          mouseDown: {
+            x: e.clientX,
+            y: e.clientY,
+          },
+        });
       },
     },
     window: {
       onMouseMove(e) {
-        console.log("onMouseMove", e);
+        if (idleState.mouseDown) {
+          const currentPoint = {
+            x: e.clientX,
+            y: e.clientY,
+          };
+
+          if(distanceFromPoints(idleState.mouseDown, currentPoint) > 5){
+            console.log('mouse moved')
+          }
+        }
       },
-      onMouseUp(e) {
-        console.log("onMouseUp", e);
+      onMouseUp() {
+        setViewState({
+          ...idleState,
+          mouseDown: undefined,
+        });
       },
     },
     actions: {
@@ -79,4 +98,12 @@ export function goToIdle(): IdleViewState {
     type: "idle",
     selectedIds: new Set(),
   };
+}
+
+export function pointOnScreenToCanvas(
+  point: { x: number; y: number },
+  canvasRect?: CanvasRect,
+) {
+  if (!canvasRect) return point;
+  return { x: point.x - canvasRect.x, y: point.y - canvasRect.y };
 }
