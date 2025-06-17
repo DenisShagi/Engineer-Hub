@@ -16,14 +16,14 @@ export function useAddStickerViewModel({
     layout: {
       onKeyDown: (e) => {
         if (e.key === "Escape") {
-          setViewState(goToIdle());
+          setViewState(goToIdle({ selectedIds: new Set() }));
         }
       },
     },
     actions: {
       addSticker: {
         isActive: true,
-        onClick: () => setViewState(goToIdle()),
+        onClick: () => setViewState(goToIdle({ selectedIds: new Set() })),
       },
     },
     canvas: {
@@ -34,8 +34,11 @@ export function useAddStickerViewModel({
           x: e.clientX - canvasRect.x,
           y: e.clientY - canvasRect.y,
         });
-        setViewState(goToIdle());
+        setViewState(goToIdle({ selectedIds: new Set() }));
       },
+    },
+    overlay: {
+      onClick: () => setViewState(goToIdle({ selectedIds: new Set() })),
     },
   });
 }

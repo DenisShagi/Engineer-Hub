@@ -1,6 +1,10 @@
 import { distanceFromPoints } from "../../domain/point";
 import { pointOnScreenToCanvas } from "../../domain/screen-to-canvas";
-import { SelectionModifier, selectItems } from "../../domain/selection";
+import {
+  Selection,
+  SelectionModifier,
+  selectItems,
+} from "../../domain/selection";
 import { ViewModelParams } from "../view-model-params";
 import { ViewModel } from "../view-model-type";
 import { goToAddSticker } from "./add-sticker";
@@ -51,11 +55,7 @@ export function useIdleViewModel({
     },
 
     overlay: {
-      onClick: () => {
-        select(idleState, [], "replace");
-      },
       onMouseDown(e) {
-
         setViewState({
           ...idleState,
           mouseDown: pointOnScreenToCanvas(
@@ -66,6 +66,14 @@ export function useIdleViewModel({
             canvasRect,
           ),
         });
+      },
+      onMouseUp() {
+        if (idleState.mouseDown) {
+          setViewState({
+            ...idleState,
+            selectedIds: selectItems(idleState.selectedIds, [], "replace"),
+          });
+        }
       },
     },
     window: {
@@ -81,7 +89,13 @@ export function useIdleViewModel({
 
           if (distanceFromPoints(idleState.mouseDown, currentPoint) > 5) {
             setViewState(
-              goToSelectionWindow(idleState.mouseDown, currentPoint),
+              goToSelectionWindow({
+                startPoint: idleState.mouseDown,
+                endPoint: currentPoint,
+                initialSelectedIds: e.shiftKey  
+                  ? idleState.selectedIds
+                  : undefined,
+              }),
             );
           }
         }
@@ -102,9 +116,13 @@ export function useIdleViewModel({
   });
 }
 
-export function goToIdle(): IdleViewState {
+export function goToIdle({
+  selectedIds,
+}: {
+  selectedIds: Selection;
+}): IdleViewState {
   return {
     type: "idle",
-    selectedIds: new Set(),
+    selectedIds: selectedIds ?? new Set(),
   };
 }
