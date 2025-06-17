@@ -1,11 +1,19 @@
-import { IdleViewState } from "../../model/view-state";
-import { ViewModelParams } from '../view-model-params'
-import { ViewModel } from '../view-model-type'
+import { selectItems } from "../../domain/selection";
+import { ViewModelParams } from "../view-model-params";
+import { ViewModel } from "../view-model-type";
 
+export type IdleViewState = {
+  type: "idle";
+  selectedIds: Set<string>;
+  mouseDown?: {
+    x: number;
+    y: number;
+  };
+};
 
 export function useIdleViewModel({
   nodesModel,
-  viewStateModel,
+  setViewState,
 }: ViewModelParams) {
   return (idleState: IdleViewState): ViewModel => ({
     nodes: nodesModel.nodes.map((node) => ({
@@ -13,9 +21,23 @@ export function useIdleViewModel({
       isSelected: idleState.selectedIds.has(node.id),
       onClick: (e) => {
         if (e.ctrlKey || e.shiftKey) {
-          viewStateModel.selection([node.id], "toggle");
+          setViewState({
+            ...idleState,
+            selectedIds: selectItems(
+              idleState.selectedIds,
+              [node.id],
+              "toggle",
+            ),
+          });
         } else {
-          viewStateModel.selection([node.id], "replace");
+          setViewState({
+            ...idleState,
+            selectedIds: selectItems(
+              idleState.selectedIds,
+              [node.id],
+              "replace",
+            ),
+          });
         }
       },
     })),
@@ -31,12 +53,30 @@ export function useIdleViewModel({
       onClick: () => {
         viewStateModel.selection([], "replace");
       },
+      onMouseDown(e) {
+        console.log("onMouseDown", e);
+      },
+    },
+    window: {
+      onMouseMove(e) {
+        console.log("onMouseMove", e);
+      },
+      onMouseUp(e) {
+        console.log("onMouseUp", e);
+      },
     },
     actions: {
       addSticker: {
         isActive: false,
-        onClick: () => viewStateModel.goToAddSticker(),
+        onClick: () => setViewState(goToAddSticker()),
       },
     },
   });
+}
+
+export function goToIdle(): IdleViewState {
+  return {
+    type: "idle",
+    selectedIds: new Set(),
+  };
 }

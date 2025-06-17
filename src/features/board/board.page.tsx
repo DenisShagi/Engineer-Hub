@@ -2,7 +2,6 @@
 // import { useParams } from "react-router-dom";
 import { ArrowRightIcon, StickerIcon } from "lucide-react";
 import { Button } from "@/shared/ui/kit/button";
-import { useViewState } from "./model/view-state";
 import { useNodes } from "./model/nodes";
 import { useCanvasRef } from "./hooks/use-canvas-rect";
 import React, { Ref } from "react";
@@ -12,20 +11,21 @@ import { useLayoutFocus } from "./hooks/use-layout-focus";
 import { getCursorClass } from "@/shared/lib/cursor-manager";
 import { useViewModel } from "./view-model/use-view-model";
 import { Rect } from "./domain/rect";
+import { useWindowEvents } from "./hooks/use-window-events";
 
 function BoardPage() {
   // const params = useParams<PathParams[typeof ROUTES.BOARD]>();
 
   const { canvasRef, canvasRect } = useCanvasRef();
   const nodesModel = useNodes();
-  const viewStateModel = useViewState();
   const focusRef = useLayoutFocus();
 
   const viewModel = useViewModel({
     canvasRect,
     nodesModel,
-    viewStateModel,
   });
+
+  useWindowEvents(viewModel);
 
   return (
     <Layout onKeyDown={viewModel.layout?.onKeyDown} ref={focusRef}>
@@ -39,7 +39,6 @@ function BoardPage() {
         <Overlay
           onClick={viewModel.overlay?.onClick}
           onMouseDown={viewModel.overlay?.onMouseDown}
-          onMouseUp={viewModel.overlay?.onMouseUp}
         />
         {viewModel.nodes.map((node) => (
           <Sticker
@@ -91,7 +90,7 @@ export const Component = BoardPage;
 function SelectionWindow({ height, width, x, y }: Rect) {
   return (
     <div
-      className="absolute inset-0"
+      className="absolute inset-0 bg-blue-500/30 border-2 border-blue-500"
       style={{
         transform: `translate${x}px, ${y}px`,
         width: width,

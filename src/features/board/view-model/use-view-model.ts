@@ -1,21 +1,36 @@
 import { ViewModel } from "./view-model-type";
-import { useAddStickerViewModel } from "./variants/add-sticker";
-import { useIdleViewModel } from "./variants/idle";
+import {
+  AddStickerViewState,
+  useAddStickerViewModel,
+} from "./variants/add-sticker";
+import { IdleViewState, useIdleViewModel } from "./variants/idle";
 import { ViewModelParams } from "./view-model-params";
+import { useState } from "react";
 
-export function useViewModel(params: ViewModelParams) {
-  const addStickerViewModel = useAddStickerViewModel(params);
-  const idleViewModel = useIdleViewModel(params);
+export type ViewState = AddStickerViewState | IdleViewState;
+
+export function useViewModel(params: Omit<ViewModelParams, "setViewState">) {
+  const [viewState, setViewState] = useState<ViewState>({
+    type: "idle",
+    selectedIds: new Set(),
+  });
+
+  const newParams = {
+    ...params,
+    setViewState,
+  };
+  const addStickerViewModel = useAddStickerViewModel(newParams);
+  const idleViewModel = useIdleViewModel(newParams);
 
   let viewModel: ViewModel;
 
-  switch (params.viewStateModel.viewState.type) {
+  switch (viewState.type) {
     case "add-sticker":
-      viewModel = addStickerViewModel(params.viewStateModel.viewState);
+      viewModel = addStickerViewModel(viewState);
       break;
 
     case "idle": {
-      viewModel = idleViewModel(params.viewStateModel.viewState);
+      viewModel = idleViewModel(viewState);
       break;
     }
 
