@@ -11,7 +11,6 @@ import {
 import {
   BookOpenText,
   CalendarPlus,
-  Hourglass,
   Phone,
   RefreshCw,
   UserRound,
@@ -59,7 +58,7 @@ export function BoardsListCard({
             </Link>
           </Button>
           <div className="text-sm text-gray-500">
-            <StatusBadge status={board.status} icon={<Hourglass size={16} />} />
+            <StatusBadge status={board.status}  />
           </div>
           <div className="text-sm text-gray-500 flex items-center gap-1">
             <UserRound size={20} />
