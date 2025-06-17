@@ -13,10 +13,10 @@ export function useLayoutFocus() {
         layoutRef.current?.focus();
       }
     };
-    window.addEventListener("visibilityChange", handleVisibilityChange);
+    window.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      window.removeEventListener("visibilityChange", handleVisibilityChange);
+      window.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [layoutRef]);
 

@@ -34,7 +34,7 @@ function BoardPage() {
       <Canvas
         ref={canvasRef}
         onClick={viewModel.canvas?.onClick}
-        className={clsx(getCursorClass(viewStateModel.viewState.type))}
+        className={clsx(getCursorClass(viewModel.viewState.type))}
       >
         <Overlay
           onClick={viewModel.overlay?.onClick}
@@ -48,7 +48,7 @@ function BoardPage() {
             y={node.y}
             selected={node.isSelected}
             onClick={node.onClick}
-            cursorType={viewStateModel.viewState.type}
+            cursorType={viewModel.viewState.type}
           />
         ))}
       </Canvas>
@@ -92,7 +92,7 @@ function SelectionWindow({ height, width, x, y }: Rect) {
     <div
       className="absolute inset-0 bg-blue-500/30 border-2 border-blue-500"
       style={{
-        transform: `translate${x}px, ${y}px`,
+        transform: `translate(${x}px, ${y}px)`,
         width: width,
         height: height,
       }}

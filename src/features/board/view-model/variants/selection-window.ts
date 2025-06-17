@@ -1,49 +1,56 @@
+import { Point } from "../../domain/point";
+import { createRectFromPoint } from "../../domain/rect";
+import { pointOnScreenToCanvas } from "../../domain/screen-to-canvas";
 import { ViewModelParams } from "../view-model-params";
 import { ViewModel } from "../view-model-type";
 import { goToIdle } from "./idle";
 
 export type SelectionWindowViewState = {
-	type: "selection-window";
+  type: "selection-window";
+  startPoint: Point;
+  endPoint: Point;
 };
 
-export function useAddStickerViewModel({
-	canvasRect,
-	nodesModel,
-	setViewState,
+export function useSelectionWindowViewModel({
+  canvasRect,
+  nodesModel,
+  setViewState,
 }: ViewModelParams) {
-	return (): ViewModel => ({
-		nodes: nodesModel.nodes,
-		layout: {
-			onKeyDown: (e) => {
-				if (e.key === "Escape") {
-					setViewState(goToIdle());
-				}
-			},
-		},
-		actions: {
-			addSticker: {
-				isActive: true,
-				onClick: () => setViewState(goToIdle()),
-			},
-		},
-		canvas: {
-			onClick: (e) => {
-				if (!canvasRect) return;
-				nodesModel.addSticker({
-					text: "Default",
-					x: e.clientX - canvasRect.x,
-					y: e.clientY - canvasRect.y,
-				});
-				setViewState(goToIdle());
-			},
-		},
-	});
+  return (state: SelectionWindowViewState): ViewModel => {
+    const rect = createRectFromPoint(state.startPoint, state.endPoint);
+    return {
+      selectionWindow: rect,
+      nodes: nodesModel.nodes,
+
+      window: {
+        onMouseMove(e) {
+          const currentPoint = pointOnScreenToCanvas(
+            {
+              x: e.clientX,
+              y: e.clientY,
+            },
+            canvasRect,
+          );
+          setViewState({
+            ...state,
+            endPoint: currentPoint,
+          });
+        },
+        onMouseUp: () => {
+          setViewState(goToIdle());
+        },
+      },
+    };
+  };
 }
 
-export function goToAddSticker():AddStickerViewState {
-	return {
-		type: 'add-sticker',
-		
-
-	}
+export function goToSelectionWindow(
+  startPoint: { x: number; y: number },
+  endPoint: { x: number; y: number },
+): SelectionWindowViewState {
+  return {
+    type: "selection-window",
+    startPoint,
+    endPoint,
+  };
 }
