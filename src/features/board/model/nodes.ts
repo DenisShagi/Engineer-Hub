@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState } from "react";
 
 type NodeBase = {
   id: string;
@@ -40,8 +40,8 @@ export function useNodes() {
   ]);
 
   const addSticker = (data: { text: string; x: number; y: number }) => {
-    setNodes((prev) => [
-      ...prev,
+    setNodes((lastNodes) => [
+      ...lastNodes,
       {
         id: crypto.randomUUID(),
         type: "sticker",
@@ -49,10 +49,14 @@ export function useNodes() {
       },
     ]);
   };
+  const deleteNodes = (ids: string[]) => {
+    setNodes((lastNodes) => lastNodes.filter((node) => !ids.includes(node.id)));
+  };
   return {
     nodes,
-		addSticker
+    addSticker,
+    deleteNodes,
   };
 }
 
-export type NodesModel = ReturnType<typeof useNodes>
+export type NodesModel = ReturnType<typeof useNodes>;

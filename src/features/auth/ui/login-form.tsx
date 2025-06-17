@@ -1,5 +1,6 @@
 import { Button } from "@/shared/ui/kit/button";
 import { LoaderPinwheel } from "lucide-react";
+
 import {
   FormField,
   FormItem,
@@ -34,7 +35,7 @@ export function LoginForm() {
 
   const { errorMessage, isPending, login, resetError } = useLogin();
 
-const onSubmit = form.handleSubmit((values) => login(values));
+  const onSubmit = form.handleSubmit((values) => login(values));
 
   return (
     <Form {...form}>
