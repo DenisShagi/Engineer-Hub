@@ -6,7 +6,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/shared/ui/kit/dropdown-menu";
-import { MoreHorizontalIcon } from "lucide-react";
+import { AppWindow, CalendarPlus, MoreHorizontalIcon, Phone, UserRound } from "lucide-react";
 import { StatusBadge } from "@/shared/ui/status/status-badge";
 
 interface BoardsListItemProps {
@@ -40,7 +40,8 @@ export function BoardsListItem({
             className="text-left justify-start h-auto p-0"
           >
             <Link to={href(ROUTES.BOARD, { boardId: board.id })}>
-              <span className="text-lg font-medium truncate block">
+              <span className="flex items-center gap-2 text-lg font-medium truncate">
+                <AppWindow size={20} />
                 {board.name}
               </span>
             </Link>
@@ -50,14 +51,17 @@ export function BoardsListItem({
           </span>
         </div>
 
-        <div className="flex gap-4 text-gray-500 mt-1 text-sm">
+        <div className="flex gap-2 text-gray-500 mt-1.5 text-sm items-center">
+          <UserRound size={20} />
           ФИО: {board.fullName}
         </div>
-        <div className="flex gap-4 text-gray-500 mt-1 text-sm">
+        <div className="flex gap-2 text-gray-500 mt-1.5 text-sm items-center">
+          <Phone size={20} />
           Телефон: {board.phone}
         </div>
 
-        <div className="flex gap-4 text-sm text-gray-500 mt-1">
+        <div className="flex gap-2 text-sm text-gray-500 mt-1.5 items-center">
+          <CalendarPlus size={20} />
           <div>Создано: {new Date(board.createdAt).toLocaleDateString()}</div>
           <div>
             Последнее открытие:{" "}
