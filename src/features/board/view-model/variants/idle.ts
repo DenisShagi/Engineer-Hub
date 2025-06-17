@@ -51,6 +51,10 @@ export function useIdleViewModel({
         if (e.key === "s" || e.key === "ы") {
           setViewState(goToAddSticker());
         }
+
+        if(e.key === 'Delete'){
+          setViewState(goToDeleteSticker())
+        }
       },
     },
 

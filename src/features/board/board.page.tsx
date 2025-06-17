@@ -17,11 +17,13 @@ import { Sticker } from "./ui/Sticker";
 import { SelectionWindow } from "./ui/SelectionWindow";
 import { Actions } from "./ui/Actions";
 import { ActionButton } from "./ui/ActionButton";
+import { useNodesRects } from "./hooks/use-nodes-rects";
 
 function BoardPage() {
   // const params = useParams<PathParams[typeof ROUTES.BOARD]>();
 
   const { canvasRef, canvasRect } = useCanvasRef();
+  const { nodeRef } = useNodesRects();
   const nodesModel = useNodes();
   const focusRef = useLayoutFocus();
 
@@ -48,6 +50,8 @@ function BoardPage() {
         />
         {viewModel.nodes.map((node) => (
           <Sticker
+            id={node.id}
+            ref={nodeRef}
             key={node.id}
             text={node.text}
             x={node.x}
