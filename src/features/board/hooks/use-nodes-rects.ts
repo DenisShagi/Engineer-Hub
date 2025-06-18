@@ -8,7 +8,7 @@ export type NodeRect = {
 export type NodesRectsMap = Record<string, NodeRect>;
 
 export const useNodesRects = () => {
-  const [nodesRect, setNodesRect] = useState<NodesRectsMap>({});
+  const [nodesRects, setNodesRect] = useState<NodesRectsMap>({});
 
   const resizeObserverRef = useRef<ResizeObserver | undefined>(undefined);
 
@@ -20,8 +20,8 @@ export const useNodesRects = () => {
             .map((entry) => [
               (entry.target as HTMLElement).dataset.id,
               {
-                width: entry.contentRect.width,
-                height: entry.contentRect.height,
+                width: entry.borderBoxSize[0].inlineSize,
+                height: entry.borderBoxSize[0].blockSize,
               },
             ])
             .filter((entry) => !!entry[0]),
@@ -48,13 +48,13 @@ export const useNodesRects = () => {
     }
   }, []);
 
-  useEffect(() => {
+  useEffect(() => () => {
     if (resizeObserverRef.current) {
       resizeObserverRef.current.disconnect();
     }
   }, []);
   return {
     nodeRef,
-    nodesRect,
+    nodesRects,
   };
 };
