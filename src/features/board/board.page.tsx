@@ -17,20 +17,20 @@ import { Sticker } from "./ui/sticker";
 import { SelectionWindow } from "./ui/selectionWindow";
 import { Actions } from "./ui/actions";
 import { ActionButton } from "./ui/actionButton";
-import { useNodesDimensions } from "./hooks/use-nodes-dimensions";
+import { useNodesRects } from "./hooks/use-nodes-rects";
 
 function BoardPage() {
   // const params = useParams<PathParams[typeof ROUTES.BOARD]>();
 
   const { canvasRef, canvasRect } = useCanvasRef();
-  const { nodeRef, nodesDimensions } = useNodesDimensions();
+  const { nodeRef, nodesRects } = useNodesRects();
   const nodesModel = useNodes();
   const focusRef = useLayoutFocus();
 
   const viewModel = useViewModel({
     canvasRect,
     nodesModel,
-    nodesDimensions,
+    nodesRects,
   });
 
   useWindowEvents(viewModel);
@@ -51,10 +51,15 @@ function BoardPage() {
         />
         {viewModel.nodes.map((node) => (
           <Sticker
-            key={node.id}
+            id={node.id}
             ref={nodeRef}
+            key={node.id}
+            text={node.text}
+            x={node.x}
+            y={node.y}
+            selected={node.isSelected}
+            onClick={node.onClick}
             cursorType={viewModel.viewState.type}
-            {...node}
           />
         ))}
       </Canvas>

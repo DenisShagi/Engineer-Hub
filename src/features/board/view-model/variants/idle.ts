@@ -8,7 +8,6 @@ import {
 import { ViewModelParams } from "../view-model-params";
 import { ViewModel } from "../view-model-type";
 import { goToAddSticker } from "./add-sticker";
-import { goToEditSticker } from "./edit-sticker";
 import { goToSelectionWindow } from "./selection-window";
 
 export type IdleViewState = {
@@ -52,16 +51,6 @@ export function useIdleViewModel({
       ...node,
       isSelected: idleState.selectedIds.has(node.id),
       onClick: (e) => {
-        if (
-          idleState.selectedIds.size === 1 &&
-          idleState.selectedIds.has(node.id) &&
-          !e.ctrlKey &&
-          !e.shiftKey
-        ) {
-          setViewState(goToEditSticker(node.id));
-          return;
-        }
-
         if (e.ctrlKey || e.shiftKey) {
           select(idleState, [node.id], "toggle");
         } else {
@@ -71,17 +60,6 @@ export function useIdleViewModel({
     })),
     layout: {
       onKeyDown: (e) => {
-        if (
-          !e.altKey &&
-          !e.shiftKey &&
-          !e.metaKey &&
-          !e.ctrlKey &&
-          idleState.selectedIds.size === 1
-        ) {
-          const [id] = idleState.selectedIds.values();
-          setViewState(goToEditSticker(id));
-          return;
-        }
         if (e.key === "s" || e.key === "ы") {
           setViewState(goToAddSticker());
         }
@@ -156,7 +134,9 @@ export function useIdleViewModel({
 
 export function goToIdle({
   selectedIds,
-}: { selectedIds?: Selection } = {}): IdleViewState {
+}: {
+  selectedIds: Selection;
+}): IdleViewState {
   return {
     type: "idle",
     selectedIds: selectedIds ?? new Set(),

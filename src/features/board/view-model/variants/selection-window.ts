@@ -1,6 +1,5 @@
 import { Point } from "../../domain/point";
 import {
-  createRectFromDimensions,
   createRectFromPoint,
   isRectsIntersecting,
   Rect,
@@ -22,13 +21,18 @@ export function useSelectionWindowViewModel({
   canvasRect,
   nodesModel,
   setViewState,
-  nodesDimensions,
+  nodesRects,
 }: ViewModelParams) {
   const getNodes = (state: SelectionWindowViewState, selectionRect: Rect) =>
     nodesModel.nodes.map((node) => {
-      const nodeDimensions = nodesDimensions[node.id];
-      const nodeRect = createRectFromDimensions(node, nodeDimensions);
+      const nodeDimensions = nodesRects[node.id];
 
+      const nodeRect = {
+        x: node.x,
+        y: node.y,
+        width: nodeDimensions.width,
+        height: nodeDimensions.height,
+      };
       return {
         ...node,
         isSelected:
@@ -38,10 +42,11 @@ export function useSelectionWindowViewModel({
     });
   return (state: SelectionWindowViewState): ViewModel => {
     const rect = createRectFromPoint(state.startPoint, state.endPoint);
-    const nodes = getNodes(state, rect);
+    const nodes = getNodes(state, rect)
     return {
       selectionWindow: rect,
       nodes,
+      
 
       window: {
         onMouseMove(e) {
@@ -58,9 +63,7 @@ export function useSelectionWindowViewModel({
           });
         },
         onMouseUp: () => {
-          const nodesIdsInRect = nodes
-            .filter((node) => node.isSelected)
-            .map((node) => node.id);
+          const nodesIdsInRect = nodes.filter((node) => node.isSelected).map((node) => node.id);
           setViewState(
             goToIdle({
               selectedIds: selectItems(

@@ -5,12 +5,10 @@ export type NodeRect = {
   height: number;
 };
 
-export type NodesDimensionsMap = Record<string, NodeRect>;
+export type NodesRectsMap = Record<string, NodeRect>;
 
-export const useNodesDimensions = () => {
-  const [nodesDimensions, setNodesDimensions] = useState<NodesDimensionsMap>(
-    {},
-  );
+export const useNodesRects = () => {
+  const [nodesRects, setNodesRect] = useState<NodesRectsMap>({});
 
   const resizeObserverRef = useRef<ResizeObserver | undefined>(undefined);
 
@@ -29,7 +27,7 @@ export const useNodesDimensions = () => {
             .filter((entry) => !!entry[0]),
         );
 
-        setNodesDimensions((prev) => ({
+        setNodesRect((prev) => ({
           ...prev,
           ...nodesToUpdate,
         }));
@@ -40,26 +38,23 @@ export const useNodesDimensions = () => {
     if (el) {
       resizeObserver.observe(el);
       return () => {
-        setNodesDimensions((prev) => {
-          const newNodesDimensions = { ...prev };
-          delete newNodesDimensions[(el as HTMLElement).dataset.id ?? ""];
-          return newNodesDimensions;
+        setNodesRect((prev) => {
+          const newNodesRects = { ...prev };
+          delete newNodesRects[(el as HTMLElement).dataset.id ?? ""];
+          return newNodesRects;
         });
         resizeObserver.unobserve(el);
       };
     }
   }, []);
 
-  useEffect(
-    () => () => {
-      if (resizeObserverRef.current) {
-        resizeObserverRef.current.disconnect();
-      }
-    },
-    [],
-  );
+  useEffect(() => () => {
+    if (resizeObserverRef.current) {
+      resizeObserverRef.current.disconnect();
+    }
+  }, []);
   return {
     nodeRef,
-    nodesDimensions,
+    nodesRects,
   };
 };

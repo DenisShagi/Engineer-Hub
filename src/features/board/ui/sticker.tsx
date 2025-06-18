@@ -1,51 +1,38 @@
 import { getCursorClass } from "@/shared/lib/cursor-manager";
 import clsx from "clsx";
-import React, { Ref } from "react";
+import React, {Ref} from 'react';
 export function Sticker({
   id,
   ref,
   text,
   x,
   y,
-  isSelected,
-  isEditing,
-  cursorType,
   onClick,
-  onTextChange,
+  selected,
+  cursorType,
 }: {
-  id: string;
+  id: string
   ref: Ref<HTMLButtonElement>;
   text: string;
   x: number;
   y: number;
-  isSelected?: boolean;
-  isEditing?: boolean;
-  cursorType?: string;
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  onTextChange?: (text: string) => void;
+  selected?: boolean;
+  cursorType?: string;
 }) {
   return (
     <button
-      data-id={id}
-      ref={ref}
+    data-id={id}
+    ref={ref}
       className={clsx(
         "absolute bg-yellow-300 px-2 py-4 rounded-xs shadow-md",
-        isSelected && " outline-2 outline-blue-500",
+        selected && " outline-2 outline-blue-500",
         cursorType && getCursorClass(cursorType),
       )}
       style={{ transform: `translate(${x}px, ${y}px)` }}
       onClick={onClick}
     >
-      {isEditing ? (
-        <input
-          value={text}
-          className="w-full h-full"
-          autoFocus
-          onChange={(e) => onTextChange?.(e.target.value)}
-        ></input>
-      ) : (
-        text
-      )}
+      {text}
     </button>
   );
 }
