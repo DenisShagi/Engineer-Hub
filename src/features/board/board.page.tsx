@@ -9,27 +9,28 @@ import { useLayoutFocus } from "./hooks/use-layout-focus";
 import { getCursorClass } from "@/shared/lib/cursor-manager";
 import { useViewModel } from "./view-model/use-view-model";
 import { useWindowEvents } from "./hooks/use-window-events";
-import { Layout } from "./ui/Layout";
-import { Dots } from "./ui/Dots";
-import { Canvas } from "./ui/Canvas";
-import { Overlay } from "./ui/Overlay";
-import { Sticker } from "./ui/Sticker";
-import { SelectionWindow } from "./ui/SelectionWindow";
-import { Actions } from "./ui/Actions";
-import { ActionButton } from "./ui/ActionButton";
+import { Layout } from "./ui/layout";
+import { Dots } from "./ui/dots";
+import { Canvas } from "./ui/canvas";
+import { Overlay } from "./ui/overlay";
+import { Sticker } from "./ui/sticker";
+import { SelectionWindow } from "./ui/selectionWindow";
+import { Actions } from "./ui/actions";
+import { ActionButton } from "./ui/actionButton";
 import { useNodesRects } from "./hooks/use-nodes-rects";
 
 function BoardPage() {
   // const params = useParams<PathParams[typeof ROUTES.BOARD]>();
 
   const { canvasRef, canvasRect } = useCanvasRef();
-  const { nodeRef } = useNodesRects();
+  const { nodeRef, nodesRects } = useNodesRects();
   const nodesModel = useNodes();
   const focusRef = useLayoutFocus();
 
   const viewModel = useViewModel({
     canvasRect,
     nodesModel,
+    nodesRects,
   });
 
   useWindowEvents(viewModel);
