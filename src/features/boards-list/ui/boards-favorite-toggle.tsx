@@ -16,7 +16,7 @@ export function BoardsFavoriteToggle({
     <button
       onClick={onToggle}
       className={cn(
-        "p-1 rounded-full hover:bg-gray-100 transition-colors",
+        "p-1 rounded-full hover:bg-gray-100 transition-colors cursor-pointer",
         className,
       )}
     >
