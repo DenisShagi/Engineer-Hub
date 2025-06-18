@@ -51,15 +51,10 @@ function BoardPage() {
         />
         {viewModel.nodes.map((node) => (
           <Sticker
-            id={node.id}
-            ref={nodeRef}
             key={node.id}
-            text={node.text}
-            x={node.x}
-            y={node.y}
-            selected={node.isSelected}
-            onClick={node.onClick}
+            ref={nodeRef}
             cursorType={viewModel.viewState.type}
+            {...node}
           />
         ))}
       </Canvas>

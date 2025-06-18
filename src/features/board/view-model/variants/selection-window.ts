@@ -27,14 +27,13 @@ export function useSelectionWindowViewModel({
   const getNodes = (state: SelectionWindowViewState, selectionRect: Rect) =>
     nodesModel.nodes.map((node) => {
       const nodeDimensions = nodesDimensions[node.id];
+      const nodeRect = createRectFromDimensions(node, nodeDimensions);
 
       return {
         ...node,
         isSelected:
-          isRectsIntersecting(
-            createRectFromDimensions(node, nodeDimensions),
-            selectionRect,
-          ) || state.initialSelectedIds.has(node.id),
+          isRectsIntersecting(nodeRect, selectionRect) ||
+          state.initialSelectedIds.has(node.id),
       };
     });
   return (state: SelectionWindowViewState): ViewModel => {
