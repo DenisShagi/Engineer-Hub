@@ -17,20 +17,20 @@ import { Sticker } from "./ui/sticker";
 import { SelectionWindow } from "./ui/selectionWindow";
 import { Actions } from "./ui/actions";
 import { ActionButton } from "./ui/actionButton";
-import { useNodesRects } from "./hooks/use-nodes-rects";
+import { useNodesDimensions } from "./hooks/use-nodes-dimensions";
 
 function BoardPage() {
   // const params = useParams<PathParams[typeof ROUTES.BOARD]>();
 
   const { canvasRef, canvasRect } = useCanvasRef();
-  const { nodeRef, nodesRects } = useNodesRects();
+  const { nodeRef, nodesDimensions } = useNodesDimensions();
   const nodesModel = useNodes();
   const focusRef = useLayoutFocus();
 
   const viewModel = useViewModel({
     canvasRect,
     nodesModel,
-    nodesRects,
+    nodesDimensions,
   });
 
   useWindowEvents(viewModel);
