@@ -43,10 +43,8 @@ export function useAddStickerViewModel({
   });
 }
 
-export function goToAddSticker():AddStickerViewState {
+export function goToAddSticker(): AddStickerViewState {
   return {
-    type: 'add-sticker',
-    
-
-  }
+    type: "add-sticker",
+  };
 }
