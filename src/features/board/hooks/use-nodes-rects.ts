@@ -38,6 +38,11 @@ export const useNodesRects = () => {
     if (el) {
       resizeObserver.observe(el);
       return () => {
+        setNodesRect((prev) => {
+          const newNodesRects = { ...prev };
+          delete newNodesRects[(el as HTMLElement).dataset.id ?? ""];
+          return newNodesRects;
+        });
         resizeObserver.unobserve(el);
       };
     }

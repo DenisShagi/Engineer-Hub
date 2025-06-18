@@ -52,8 +52,15 @@ export function useIdleViewModel({
           setViewState(goToAddSticker());
         }
 
-        if(e.key === 'Delete'){
-          setViewState(goToDeleteSticker())
+        if (e.key === "Delete") {
+          if (idleState.selectedIds.size > 0) {
+            const ids = Array.from(idleState.selectedIds);
+            nodesModel.deleteNodes(ids);
+            setViewState({
+              ...idleState,
+              selectedIds: new Set(),
+            });
+          }
         }
       },
     },
@@ -96,7 +103,7 @@ export function useIdleViewModel({
               goToSelectionWindow({
                 startPoint: idleState.mouseDown,
                 endPoint: currentPoint,
-                initialSelectedIds: e.shiftKey  
+                initialSelectedIds: e.shiftKey
                   ? idleState.selectedIds
                   : undefined,
               }),
