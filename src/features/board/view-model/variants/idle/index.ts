@@ -28,7 +28,7 @@ export type IdleViewState = {
 };
 
 export function useIdleViewModel(params: ViewModelParams) {
-  const { nodesModel } = params;
+  const { setViewState, nodesModel } = params;
 
   const selection = useSelection(params);
   const deleteSelected = useDeleteSelected(params);
@@ -58,6 +58,12 @@ export function useIdleViewModel(params: ViewModelParams) {
     })),
     layout: {
       onKeyDown: (e) => {
+        if (e.key === "Escape") {
+          if (idleState.selectedIds.size > 0) {
+            setViewState({ ...idleState, selectedIds: new Set() });
+            return;
+          }
+        }
         deleteSelected.handleKeyDown(idleState, e);
         goToAddSticker.handleKeyDown(e);
       },
