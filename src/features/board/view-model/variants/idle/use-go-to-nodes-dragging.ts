@@ -18,16 +18,18 @@ export function useGoToNodesDragging({
         },
         canvasRect,
       );
-
+      const isNodeSelected = idleState.selectedIds.has(
+        idleState.mouseDown.nodeId,
+      );
+      const nodesToMove = isNodeSelected
+        ? idleState.selectedIds
+        : new Set([idleState.mouseDown.nodeId]);
       if (distanceFromPoints(idleState.mouseDown, currentPoint) > 5) {
         setViewState(
           goToNodesDragging({
             startPoint: idleState.mouseDown,
             endPoint: currentPoint,
-            nodesToMove: new Set([
-              ...idleState.selectedIds,
-              idleState.mouseDown.nodeId,
-            ]),
+            nodesToMove,
           }),
         );
       }
